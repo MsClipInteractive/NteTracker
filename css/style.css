@@ -261,3 +261,76 @@ input[type="checkbox"]:checked::after {
   color: var(--text-muted);
   opacity: 0.55;
 }
+
+/* ── Farm table ──────────────────────────────── */
+
+.farm-table-wrapper {
+  overflow-x: auto;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.farm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.farm-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.farm-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.farm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.farm-table tbody tr:hover td {
+  background: var(--surface-hover);
+}
+
+.farm-char {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.farm-portrait {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+.farm-cartridge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.farm-cart-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.25rem;
+  object-fit: contain;
+  background: var(--surface);
+  flex-shrink: 0;
+}

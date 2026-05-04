@@ -19,11 +19,12 @@ const CATEGORIES = [
     color: '#7c3aed',
     quests: [
       'Nacupeda\'s Pool wish',
-      'Daily Quests (Annulite)',
+      'Daily Quests (Annulith)',
       'Daily Quests (Battlepass)',
       'Check \'The Cafe by Origen\'',
       'Character Pixels (energy) spent',
       'Chiz fonds generated',
+      'Apartment Beetle Coin box',
       'Bonds leveled (gifts) (10/10)',
       'Bonds fortune',
     ],
