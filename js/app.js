@@ -25,6 +25,7 @@ const CATEGORIES = [
       'Character Pixels (energy) spent',
       'Chiz fonds generated',
       'Apartment Beetle Coin box',
+      'Interact with appartment NPCs',
       'Bonds leveled (gifts) (10/10)',
       'Bonds fortune',
     ],
