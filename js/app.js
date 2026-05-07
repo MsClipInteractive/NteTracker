@@ -20,7 +20,6 @@ const CATEGORIES = [
     quests: [
       'Nacupeda\'s Pool wish',
       'Apartment Beetle Coin box',
-      'Apartment NPC interaction',
       'Bonds leveled (gifts) (10/10)',
       'Complete Daily Date (cinema)',
       'Check \'The Cafe by Origen\'',
