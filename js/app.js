@@ -1,10 +1,10 @@
 // ============================================================
 // Configuration
 // Adjust DAILY_RESET_HOUR_UTC if the game's reset time changes.
-// 5 = 05:00 UTC = 13:00 CST (standard NtE reset time)
+// 4 = 04:00 UTC = 12:00 CST (standard NtE reset time)
 // ============================================================
 
-const DAILY_RESET_HOUR_UTC = 5;
+const DAILY_RESET_HOUR_UTC = 4;
 
 // ============================================================
 // Quest data
@@ -88,11 +88,11 @@ function getGameWeekKey(now = new Date()) {
 
 /**
  * Returns an integer index for the current bi-weekly period.
- * Reference anchor: 2026-01-05 05:00 UTC (a known Monday reset).
+ * Reference anchor: 2026-01-05 00:00 UTC (adjusted midnight = 05:00 UTC real time).
  * Every 14 days the index increments by 1.
  */
 function getGameBiweeklyKey(now = new Date()) {
-  const REFERENCE = new Date('2026-01-05T05:00:00Z');
+  const REFERENCE = new Date('2026-01-05T00:00:00Z');
   const adjusted = new Date(now.getTime() - DAILY_RESET_HOUR_UTC * 3_600_000);
   const daysSinceRef = (adjusted.getTime() - REFERENCE.getTime()) / 86_400_000;
   return Math.floor(daysSinceRef / 14);
@@ -103,6 +103,50 @@ function getCurrentKey(resetType) {
   if (resetType === 'weekly') return getGameWeekKey();
   if (resetType === 'biweekly') return String(getGameBiweeklyKey());
   return '';
+}
+
+/**
+ * Returns the Date of the next reset for the given reset type.
+ */
+function getNextResetDate(resetType, now = new Date()) {
+  if (resetType === 'daily') {
+    const next = new Date(now);
+    next.setUTCHours(DAILY_RESET_HOUR_UTC, 0, 0, 0);
+    if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+    return next;
+  }
+  if (resetType === 'weekly') {
+    const next = new Date(now);
+    next.setUTCHours(DAILY_RESET_HOUR_UTC, 0, 0, 0);
+    const day = next.getUTCDay(); // 0=Sun, 1=Mon
+    const daysToAdd = day === 1 ? (next <= now ? 7 : 0) : (8 - day) % 7 || 7;
+    next.setUTCDate(next.getUTCDate() + daysToAdd);
+    return next;
+  }
+  if (resetType === 'biweekly') {
+    // Actual wall-clock reference for biweekly resets: 2026-01-05T05:00:00Z
+    const BIWEEKLY_REF = new Date('2026-01-05T04:00:00Z');
+    const currentKey = getGameBiweeklyKey(now);
+    return new Date(BIWEEKLY_REF.getTime() + (currentKey + 1) * 14 * 86_400_000);
+  }
+  return null;
+}
+
+/**
+ * Formats the next reset time for display.
+ * Daily: local HH:mm. Weekly/Bi-Weekly: relative Xd Yh.
+ */
+function formatNextReset(resetType, now = new Date()) {
+  const next = getNextResetDate(resetType, now);
+  if (!next) return '';
+  const diffMs = next - now;
+  const totalMinutes = Math.floor(diffMs / 60_000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  if (days > 0) return `${days}d ${hours}h`;
+  const minutes = totalMinutes % 60;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
 }
 
 // ============================================================
@@ -182,6 +226,11 @@ function buildCard(category) {
   title.className = 'card-title';
   title.textContent = category.label;
 
+  const nextReset = document.createElement('span');
+  nextReset.className = 'card-progress card-next-reset';
+  nextReset.title = 'Nächster Reset';
+  nextReset.textContent = `↻ ${formatNextReset(category.resetType)}`;
+
   const progress = document.createElement('span');
   progress.className = 'card-progress';
   progress.textContent = `${done} / ${total}`;
@@ -193,6 +242,7 @@ function buildCard(category) {
   resetBtn.addEventListener('click', () => onManualReset(category.id));
 
   header.appendChild(title);
+  header.appendChild(nextReset);
   header.appendChild(progress);
   header.appendChild(resetBtn);
 
