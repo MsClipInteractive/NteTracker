@@ -41,7 +41,7 @@ const CATEGORIES = [
       'Realm of Greed (Mammon)',
       'Apartment loot cloud anomaly',
       'City Stamina (energy) spent',
-      'Special weekly delivery',
+      'Special weekly delivery (reset at 23:00 CEST)',
       'Anomaly Pilgrimage (Weekly Boss)',
       'Weekly Quests (Battlepass)',
     ],
