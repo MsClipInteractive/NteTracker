@@ -302,6 +302,20 @@ input[type="checkbox"]:checked::after {
   background: var(--surface-hover);
 }
 
+/* ── Links table ────────────────────────────── */
+
+.links-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.links-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
 .farm-char {
   display: flex;
   align-items: center;
