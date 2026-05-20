@@ -27,7 +27,6 @@ const CATEGORIES = [
       'Character Pixels (energy) spent',
       'Daily Quests (Annulith)',
       'Daily Quests (Battlepass)',
-      'Chiz fonds generated',
       'Bonds fortune',
     ],
   },
