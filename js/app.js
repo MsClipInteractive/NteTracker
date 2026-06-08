@@ -6,6 +6,16 @@
 
 const DAILY_RESET_HOUR_UTC = 4;
 
+// Bi-weekly (Monday) reference anchor: 2026-01-05 – "Pink Paws Heist"
+// BIWEEKLY_REF_KEY  – used for period-index calculation (adjusted midnight UTC)
+// BIWEEKLY_REF_WALL – actual wall-clock moment of that reset (includes DAILY_RESET_HOUR_UTC offset)
+const BIWEEKLY_REF_KEY = new Date('2026-01-05T00:00:00Z');
+const BIWEEKLY_REF_WALL = new Date('2026-01-05T04:00:00Z');
+
+// Bi-weekly (Thursday) reference anchor: 2026-06-04 – "Beyond the Rails - Prime Circle"
+const BIWEEKLY_THU_REF_KEY = new Date('2026-06-04T00:00:00Z');
+const BIWEEKLY_THU_REF_WALL = new Date('2026-06-04T04:00:00Z');
+
 // ============================================================
 // Quest data
 // To add/remove quests, edit the `quests` arrays below.
@@ -47,12 +57,20 @@ const CATEGORIES = [
   },
   {
     id: 'biweekly',
-    label: 'Bi-Weekly',
+    label: 'Bi-Weekly (Monday)',
     resetType: 'biweekly',
     color: '#ea580c',
     quests: [
-      'Beyond the Rails - Prime Circle',
       'Pink Paws Heist',
+    ],
+  },
+  {
+    id: 'biweekly-thu',
+    label: 'Bi-Weekly (Thursday)',
+    resetType: 'biweekly-thu',
+    color: '#ea580c',
+    quests: [
+      'Beyond the Rails - Prime Circle',
     ],
   },
 ];
@@ -88,14 +106,25 @@ function getGameWeekKey(now = new Date()) {
 }
 
 /**
- * Returns an integer index for the current bi-weekly period.
- * Reference anchor: 2026-01-05 00:00 UTC (adjusted midnight = 05:00 UTC real time).
+ * Returns an integer index for the current bi-weekly period (Monday reset).
+ * Reference anchor: 2026-01-05 00:00 UTC (adjusted midnight = 04:00 UTC real time).
  * Every 14 days the index increments by 1.
  */
 function getGameBiweeklyKey(now = new Date()) {
-  const REFERENCE = new Date('2026-01-05T00:00:00Z');
+  const REFERENCE = BIWEEKLY_REF_KEY;
   const adjusted = new Date(now.getTime() - DAILY_RESET_HOUR_UTC * 3_600_000);
   const daysSinceRef = (adjusted.getTime() - REFERENCE.getTime()) / 86_400_000;
+  return Math.floor(daysSinceRef / 14);
+}
+
+/**
+ * Returns an integer index for the current bi-weekly period (Thursday reset).
+ * Reference anchor: 2026-06-04 00:00 UTC (adjusted midnight = 04:00 UTC real time).
+ * Every 14 days the index increments by 1.
+ */
+function getGameBiweeklyThuKey(now = new Date()) {
+  const adjusted = new Date(now.getTime() - DAILY_RESET_HOUR_UTC * 3_600_000);
+  const daysSinceRef = (adjusted.getTime() - BIWEEKLY_THU_REF_KEY.getTime()) / 86_400_000;
   return Math.floor(daysSinceRef / 14);
 }
 
@@ -103,6 +132,7 @@ function getCurrentKey(resetType) {
   if (resetType === 'daily') return getGameDayKey();
   if (resetType === 'weekly') return getGameWeekKey();
   if (resetType === 'biweekly') return String(getGameBiweeklyKey());
+  if (resetType === 'biweekly-thu') return String(getGameBiweeklyThuKey());
   return '';
 }
 
@@ -125,10 +155,12 @@ function getNextResetDate(resetType, now = new Date()) {
     return next;
   }
   if (resetType === 'biweekly') {
-    // Actual wall-clock reference for biweekly resets: 2026-01-05T05:00:00Z
-    const BIWEEKLY_REF = new Date('2026-01-05T04:00:00Z');
     const currentKey = getGameBiweeklyKey(now);
-    return new Date(BIWEEKLY_REF.getTime() + (currentKey + 1) * 14 * 86_400_000);
+    return new Date(BIWEEKLY_REF_WALL.getTime() + (currentKey + 1) * 14 * 86_400_000);
+  }
+  if (resetType === 'biweekly-thu') {
+    const currentKey = getGameBiweeklyThuKey(now);
+    return new Date(BIWEEKLY_THU_REF_WALL.getTime() + (currentKey + 1) * 14 * 86_400_000);
   }
   return null;
 }
