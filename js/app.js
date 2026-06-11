@@ -38,7 +38,6 @@ const CATEGORIES = [
       'Daily Quests (Annulith)',
       'Daily Quests (Battlepass)',
       'Bagel interactions (View 5 posts, like 3 posts, comment on 3 posts)',
-      'Bonds fortune',
     ],
   },
   {
